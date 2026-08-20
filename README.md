@@ -41,6 +41,7 @@ not by us.
 | `src/interfaces/` | External interfaces (Uniswap V2, the factory). |
 | `src/ArrowBondingCurveStable.sol`, `ArrowFactoryStable.sol` | Same rules, for chains that quote in an ERC20 stablecoin instead of native ETH. |
 | `src/tempo/` | Clone-based variant (`ArrowTokenClone`, `ArrowBondingCurveCloneStable`, `ArrowFactoryStableClone`) built for Tempo specifically — see the docs in that folder for why. |
+| `src/hyperevm/` | Clone-based variant for HyperEVM (`ArrowBondingCurveClone`, `ArrowFactoryClone`) — reuses `tempo/ArrowTokenClone` as-is. Different reason than Tempo's: HyperEVM's real block gas limit is only 3,000,000 gas, and a from-scratch `createTokenAndBuy` measured at 3,029,241 gas, just over it, so no launch could ever be mined. Cloning both contracts instead of deploying their full bytecode brings it to ~695k–861k gas. |
 | `test/` | Foundry test suites, run against live mainnet forks of each chain — not mocks of Uniswap or the RPC. |
 | `script/` | Deploy scripts for every chain variant. |
 
@@ -65,9 +66,16 @@ Every address below is verifiable on-chain: `factory.owner()`, `router.factory()
 - Quote asset (pathUSD): `0x20C0000000000000000000000000000000000000`
 
 ### HyperEVM (chain ID 999)
-- Factory: `0xf4F149383c5099A2D3d42F729700A4Eb479606c7`
+- Factory: `0xC134185838620B7965a8980222Fe0562482a9ce6`
+- Token implementation (cloned per launch): `0xADA3421EE6378501edCaf03Fb33a51ACD48282b4`
+- Curve implementation (cloned per launch): `0xC326AB4542C05FDa4ce7D021DCfe42dd25C59C37`
 - Uniswap V2 Router: `0xb4a9C4e6Ea8E2191d2FA5B380452a634Fb21240A`
 - Quote asset: native HYPE
+- Note: an earlier, non-clone factory was deployed at `0xf4F149383c5099A2D3d42F729700A4Eb479606c7`.
+  It was never usable — `createTokenAndBuy` needed 3,029,241 gas against a real
+  3,000,000 block gas limit, so every launch attempt reverted before ever
+  reaching a block (`allTokensLength() == 0`). Replaced by the clone factory
+  above; the old address is dead and should be ignored.
 
 ## Building and testing
 
