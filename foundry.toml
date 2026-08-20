@@ -15,4 +15,19 @@ libs = ["lib"]
 optimizer = true
 optimizer_runs = 1
 
+# HyperEVM's block gas limit is only 3,000,000 (vs ~30M on most EVM chains),
+# and its RPC flags PUSH0 (EIP-3855 / the Shanghai opcode Solidity 0.8.20+
+# emits by default) as unsupported. Both need addressing: evm_version pins
+# the compiler to Paris (pre-Shanghai, no PUSH0), and the low optimizer_runs
+# shrinks deployed bytecode enough to fit each contract's deploy under the
+# 3M gas ceiling — same lever as the Tempo profile above, different reason.
+# Build/test/deploy with FOUNDRY_PROFILE=hyperevm to use this.
+[profile.hyperevm]
+src = "src"
+out = "out"
+libs = ["lib"]
+optimizer = true
+optimizer_runs = 1
+evm_version = "paris"
+
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

@@ -64,6 +64,11 @@ Every address below is verifiable on-chain: `factory.owner()`, `router.factory()
 - Uniswap V2 Router: `0x0FBac3c46F6F83B44C7fb4EA986d7309C701D73E`
 - Quote asset (pathUSD): `0x20C0000000000000000000000000000000000000`
 
+### HyperEVM (chain ID 999)
+- Factory: `0xf4F149383c5099A2D3d42F729700A4Eb479606c7`
+- Uniswap V2 Router: `0xb4a9C4e6Ea8E2191d2FA5B380452a634Fb21240A`
+- Quote asset: native HYPE
+
 ## Building and testing
 
 Dependencies (OpenZeppelin, forge-std) aren't vendored in this repo — install
