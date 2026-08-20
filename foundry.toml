@@ -1,0 +1,18 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+
+# Tempo's transaction validation rejects large CREATE transactions well under the
+# standard EIP-170 24576-byte limit (see src/tempo/*.sol docs). Minimizing optimizer
+# runs shrinks deployed bytecode size (at the cost of higher per-call runtime gas,
+# an easy tradeoff here) without touching any contract logic. Build/test/deploy the
+# Tempo contracts with FOUNDRY_PROFILE=tempo to use this.
+[profile.tempo]
+src = "src"
+out = "out"
+libs = ["lib"]
+optimizer = true
+optimizer_runs = 1
+
+# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
