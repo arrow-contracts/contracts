@@ -77,6 +77,17 @@ Every address below is verifiable on-chain: `factory.owner()`, `router.factory()
   reaching a block (`allTokensLength() == 0`). Replaced by the clone factory
   above; the old address is dead and should be ignored.
 
+### Base (chain ID 8453)
+- Factory: `0xC134185838620B7965a8980222Fe0562482a9ce6`
+- Uniswap V2 Router: `0x4752ba5DBc23f44D87826276BF6Fd6b1C372aD24`
+
+### BNB Chain (chain ID 56)
+- Factory: `0xf4F149383c5099A2D3d42F729700A4Eb479606c7`
+- Router: `0x10ED43C718714eb63d5aA57B78B54704E256024E` (PancakeSwap V2 — the
+  dominant V2-compatible AMM on BNB Chain; same `IUniswapV2Router02`
+  interface as everywhere else)
+- Quote asset: native BNB
+
 ## Building and testing
 
 Dependencies (OpenZeppelin, forge-std) aren't vendored in this repo — install
