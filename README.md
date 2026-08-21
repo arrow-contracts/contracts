@@ -42,6 +42,7 @@ not by us.
 | `src/ArrowBondingCurveStable.sol`, `ArrowFactoryStable.sol` | Same rules, for chains that quote in an ERC20 stablecoin instead of native ETH. |
 | `src/tempo/` | Clone-based variant (`ArrowTokenClone`, `ArrowBondingCurveCloneStable`, `ArrowFactoryStableClone`) built for Tempo specifically — see the docs in that folder for why. |
 | `src/hyperevm/` | Clone-based variant for HyperEVM (`ArrowBondingCurveClone`, `ArrowFactoryClone`) — reuses `tempo/ArrowTokenClone` as-is. Different reason than Tempo's: HyperEVM's real block gas limit is only 3,000,000 gas, and a from-scratch `createTokenAndBuy` measured at 3,029,241 gas, just over it, so no launch could ever be mined. Cloning both contracts instead of deploying their full bytecode brings it to ~695k–861k gas. |
+| `src/ArrowBondingCurveConfig.sol`, `ArrowFactoryConfig.sol` | Same as `ArrowBondingCurve`/`ArrowFactory` (native-quote, full bytecode, no cloning), except `VIRTUAL_ETH`/`MIGRATION_THRESHOLD` are constructor-set `immutable`s instead of hardcoded `constant`s. `ArrowBondingCurve`'s fixed "4 ether" migration bar assumes the native token is worth thousands of dollars a unit (true for ETH, BNB) — on a chain where it isn't (AVAX at single-digit dollars), "4 units" is a near-meaningless raise. Used where that assumption breaks; see the Avalanche entry below. |
 | `test/` | Foundry test suites, run against live mainnet forks of each chain — not mocks of Uniswap or the RPC. |
 | `script/` | Deploy scripts for every chain variant. |
 
@@ -87,6 +88,20 @@ Every address below is verifiable on-chain: `factory.owner()`, `router.factory()
   dominant V2-compatible AMM on BNB Chain; same `IUniswapV2Router02`
   interface as everywhere else)
 - Quote asset: native BNB
+
+### Avalanche C-Chain (chain ID 43114)
+- Factory: `0xC134185838620B7965a8980222Fe0562482a9ce6` (`ArrowFactoryConfig`)
+- Uniswap V2 Router: `0x4752ba5DBc23f44D87826276BF6Fd6b1C372aD24`
+- Quote asset: native AVAX
+- Migration threshold: **290 AVAX** (~US$2,000 at deploy time), virtual reserve
+  72.5 AVAX — configured, not the usual fixed "4 ether". AVAX was ~$7/unit at
+  deploy time; the standard `ArrowBondingCurve`'s hardcoded 4-unit threshold
+  would have been a ~$28 raise, migrating almost immediately with no real
+  price discovery. See `src/ArrowBondingCurveConfig.sol`.
+- Note: an earlier factory (the standard, fixed-threshold `ArrowFactory`) was
+  deployed at `0xf4F149383c5099A2D3d42F729700A4Eb479606c7` and is fully
+  functional, just economically wrong for AVAX (see above) — superseded by
+  the `ArrowFactoryConfig` deployment before any real token launched on it.
 
 ## Building and testing
 
